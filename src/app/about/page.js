@@ -1,10 +1,9 @@
 "use client";
+import { useTheme } from "../../../contexts/ThemeContext";
 import clsx from "clsx";
-import Image from "next/image";
-import { useTheme } from "../../contexts/ThemeContext";
 
-export default function Home() {
-  const { theme, toggleTheme } = useTheme();
+export default function About() {
+  const { theme } = useTheme();
   return (
     <div
       className={clsx(
@@ -12,7 +11,8 @@ export default function Home() {
         theme === "dark" ? "bg-black text-white" : "bg-white text-black"
       )}
     >
-      <div>Full</div>
+      <div className="p-8 text-2xl font-bold">About Page</div>
+      <div className="p-8">This is the About page for the CWA Project.</div>
     </div>
   );
 }

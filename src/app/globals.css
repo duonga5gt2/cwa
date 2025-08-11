@@ -1,6 +1,4 @@
 @import "tailwindcss";
-
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -11,4 +9,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Add to your global CSS file */
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.animate-gradient {
+  animation: gradient-move 8s linear infinite;
+  /* Optionally, use a CSS variable for speed if you want to control it from JS */
 }

@@ -2,7 +2,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import clsx from "clsx";
 import { ThemeProvider } from "../../contexts/ThemeContext";
-import { Navbar } from "../../components/elements";
+import Navbar from "../../components/elements/Navbar";
+import Footer from "../../components/elements/Footer";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,14 +31,16 @@ export default function RootLayout({ children }) {
           "bg-white text-black dark:bg-zinc-900 dark:text-white"
         )}
       >
-        <div>
-          <div className="text-xs bg-gray-300 text-black-700">@21616838</div>
-
-          <ThemeProvider>
+        <ThemeProvider>
+          <header>
             <Navbar />
-            {children}
-          </ThemeProvider>
-        </div>
+
+            <hr style={{ border: 0, borderTop: "2px solid #222", margin: 0 }} />
+          </header>
+
+          <main style={{ paddingTop: 80 }}>{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );
