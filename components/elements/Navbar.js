@@ -33,31 +33,50 @@ const Navbar = () => {
       elevation={theme === "dark" ? 0 : 3}
       color="transparent"
       sx={{
-        boxShadow: theme === "dark" ? "none" : "0 4px 24px 0 rgba(0,0,0,0.2)",
-        bgcolor: theme === "dark" ? "#18181b" : "#f8fafc",
-        color: theme === "dark" ? "#fff" : "#22223b",
+        boxShadow:
+          theme === "dark"
+            ? "0 10px 30px rgba(0,0,0,.35)"
+            : "0 8px 24px rgba(15,23,42,.12)",
+        bgcolor:
+          theme === "dark" ? "rgba(12,14,20,0.75)" : "rgba(248,250,252,0.75)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        color: theme === "dark" ? "#e5e7eb" : "#0f172a",
+        borderBottom: `1px solid ${
+          theme === "dark" ? "rgba(148,163,184,.18)" : "rgba(2,6,23,.08)"
+        }`,
         p: 0,
-        transition: "background 0.3s, color 0.3s, box-shadow 0.3s",
+        transition:
+          "background 300ms ease, color 300ms ease, box-shadow 300ms ease",
       }}
     >
       <span
         style={{
-          color: theme === "dark" ? "#fff" : "#22223b",
-          background: theme === "dark" ? "#27272a" : "#e0e7eb",
-          padding: "2px 8px",
+          color: theme === "dark" ? "#e5e7eb" : "#0f172a",
+          background:
+            theme === "dark"
+              ? "linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)"
+              : "linear-gradient(135deg, #22c55e 0%, #06b6d4 100%)",
+          padding: "3px 10px",
           fontSize: 12,
-          fontWeight: 500,
-          letterSpacing: 1,
-          transition: "background 0.3s, color 0.3s",
+          fontWeight: 600,
+          letterSpacing: 0.6,
+          borderBottomRightRadius: 10,
+          borderTopRightRadius: 10,
+          boxShadow:
+            theme === "dark"
+              ? "0 6px 18px rgba(14,165,233,.35)"
+              : "0 6px 18px rgba(34,197,94,.25)",
           display: "inline-block",
         }}
       >
         @21626838
       </span>
+
       <Toolbar
         disableGutters
         sx={{
-          minHeight: 56,
+          minHeight: 64,
           px: 3,
           display: "flex",
           justifyContent: "space-between",
@@ -69,31 +88,27 @@ const Navbar = () => {
           component="div"
           sx={{
             flex: 2,
-            fontWeight: "bold",
-            letterSpacing: 2,
+            fontWeight: 900,
+            letterSpacing: 1.2,
             textAlign: "left",
-            background:
-              theme === "dark"
-                ? "linear-gradient(90deg, #38bdf8 0%, #818cf8 100%)"
-                : "linear-gradient(90deg, #06b6d4 0%, #6366f1 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
             display: "inline-block",
-            textShadow:
-              theme === "dark"
-                ? "0 2px 8px rgba(24,24,27,0.4)"
-                : "0 2px 8px rgba(0,0,0,0.08)",
-            transition: "background 0.3s, color 0.3s",
           }}
         >
-          <GradientText
-            colors={["#3ca2fa", "#80eeb4", "#3ca2fa", "#80eeb4", "#3ca2fa"]}
-            animationSpeed={6}
-            showBorder={false}
-            className="text-3xl font-black"
+          <div
+            style={{
+              fontSize: "1.75rem", // ~28px
+              fontWeight: 800,
+              letterSpacing: "1px",
+
+              lineHeight: 1.2,
+              textShadow:
+                theme === "dark"
+                  ? "0 1px 2px rgba(255,255,255,0.6)"
+                  : "0 1px 2px rgba(0,0,0,0.4)",
+            }}
           >
-            Cloud-based Web Applications
-          </GradientText>
+            Cloud-Based Web Applications
+          </div>
         </Typography>
 
         <Box
@@ -123,16 +138,37 @@ const Navbar = () => {
                     sx={{
                       minWidth: 0,
                       px: 1,
-                      color: theme === "dark" ? "#fff" : "#22223b",
-                      fontWeight: 500,
+                      color: theme === "dark" ? "#e5e7eb" : "#0f172a",
+                      fontWeight: 600,
                       textTransform: "none",
                       whiteSpace: "nowrap",
+                      position: "relative",
+                      letterSpacing: 0.2,
                       "&:hover": {
                         bgcolor:
                           theme === "dark"
-                            ? "rgba(255,255,255,0.08)"
-                            : "#e0e7ff",
-                        color: theme === "dark" ? "#38bdf8" : "#6366f1",
+                            ? "rgba(148,163,184,0.10)"
+                            : "rgba(2,6,23,0.06)",
+                        color: theme === "dark" ? "#7dd3fc" : "#2563eb",
+                      },
+                      "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        left: 6,
+                        right: 6,
+                        bottom: 6,
+                        height: 2,
+                        borderRadius: 2,
+                        transform: "scaleX(0)",
+                        transformOrigin: "left",
+                        transition: "transform 200ms ease",
+                        background:
+                          theme === "dark"
+                            ? "linear-gradient(90deg, #22d3ee, #a78bfa)"
+                            : "linear-gradient(90deg, #06b6d4, #6366f1)",
+                      },
+                      "&:hover::after": {
+                        transform: "scaleX(1)",
                       },
                     }}
                   >
@@ -149,7 +185,15 @@ const Navbar = () => {
               <IconButton
                 edge="end"
                 color="inherit"
-                sx={{ ml: 1 }}
+                sx={{
+                  ml: 1,
+                  "&:hover": {
+                    bgcolor:
+                      theme === "dark"
+                        ? "rgba(148,163,184,0.12)"
+                        : "rgba(2,6,23,0.06)",
+                  },
+                }}
                 onClick={() => setDrawerOpen(true)}
               >
                 <MenuIcon />
@@ -161,23 +205,52 @@ const Navbar = () => {
               >
                 <Box
                   sx={{
-                    width: 220,
-                    bgcolor: theme === "dark" ? "#18181b" : "#f8fafc",
+                    width: 240,
+                    bgcolor: theme === "dark" ? "#0b1020" : "#ffffff",
                     height: "100%",
+                    color: theme === "dark" ? "#e5e7eb" : "#0f172a",
+                    borderLeft: `1px solid ${
+                      theme === "dark"
+                        ? "rgba(148,163,184,.18)"
+                        : "rgba(2,6,23,.08)"
+                    }`,
+                    boxShadow:
+                      theme === "dark"
+                        ? "0 8px 28px rgba(0,0,0,.5)"
+                        : "0 10px 30px rgba(15,23,42,.12)",
                   }}
                   role="presentation"
                   onClick={() => setDrawerOpen(false)}
                   onKeyDown={() => setDrawerOpen(false)}
                 >
-                  <List>
+                  <List sx={{ py: 1 }}>
                     {navLinks.map((link) => (
                       <ListItem key={link.href} disablePadding>
                         <Link href={link.href} passHref legacyBehavior>
-                          <ListItemButton component="a">
+                          <ListItemButton
+                            component="a"
+                            sx={{
+                              px: 2,
+                              py: 1.2,
+                              borderRadius: 1.5,
+                              mx: 1,
+                              my: 0.5,
+                              "&:hover": {
+                                bgcolor:
+                                  theme === "dark"
+                                    ? "rgba(125,211,252,0.10)"
+                                    : "rgba(37,99,235,0.08)",
+                              },
+                            }}
+                          >
                             <ListItemText
                               primary={link.label}
+                              primaryTypographyProps={{
+                                fontWeight: 600,
+                                letterSpacing: 0.2,
+                              }}
                               style={{
-                                color: theme === "dark" ? "white" : "black",
+                                color: theme === "dark" ? "#e5e7eb" : "#0f172a",
                               }}
                             />
                           </ListItemButton>
@@ -196,8 +269,43 @@ const Navbar = () => {
               checked={theme === "dark"}
               onChange={toggleTheme}
               color="default"
+              sx={{
+                "& .MuiSwitch-switchBase": {
+                  "&.Mui-checked": {
+                    color: theme === "dark" ? "#22d3ee" : "#2563eb",
+                    "& + .MuiSwitch-track": {
+                      background:
+                        theme === "dark"
+                          ? "linear-gradient(90deg, #22d3ee, #a78bfa)"
+                          : "linear-gradient(90deg, #06b6d4, #6366f1)",
+                      opacity: 1,
+                    },
+                  },
+                },
+                "& .MuiSwitch-track": {
+                  borderRadius: 22,
+                  opacity: 1,
+                  background:
+                    theme === "dark"
+                      ? "rgba(148,163,184,.25)"
+                      : "rgba(2,6,23,.15)",
+                },
+                "& .MuiSwitch-thumb": {
+                  boxShadow:
+                    theme === "dark"
+                      ? "0 2px 8px rgba(0,0,0,.45)"
+                      : "0 2px 8px rgba(15,23,42,.18)",
+                },
+              }}
             />
-            <Typography variant="caption">
+            <Typography
+              variant="caption"
+              sx={{
+                fontWeight: 600,
+                letterSpacing: 0.3,
+                color: theme === "dark" ? "#cbd5e1" : "#334155",
+              }}
+            >
               {theme === "dark" ? "Dark" : "Light"} Mode
             </Typography>
           </Box>

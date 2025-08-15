@@ -21,3 +21,38 @@ body {
   animation: gradient-move 8s linear infinite;
   /* Optionally, use a CSS variable for speed if you want to control it from JS */
 }
+
+
+/* Nuke any background/pill that GradientText might add */
+.no-pill,
+.no-pill * {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.no-pill {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  display: inline !important;
+  backdrop-filter: none !important;
+}
+
+/* In case the component draws the pill with pseudo-elements */
+.no-pill::before,
+.no-pill::after,
+.no-pill *::before,
+.no-pill *::after {
+  content: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Ensure the gradient is on the glyphs only */
+.no-pill {
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
