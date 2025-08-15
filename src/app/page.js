@@ -7,62 +7,58 @@ import {
   oneDark,
   oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
+import HomeTabs from "../../components/elements/HomeTabs";
+import { useHome } from "../../contexts/HomeContext";
 
-export default function Home() {
+function TabsGenerator() {
   const { theme } = useTheme();
-  const [fields, setFields] = useState([]);
-  const [type, setType] = useState("text");
-  const [placeholder, setPlaceholder] = useState("");
+  const [tabs, setTabs] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
-  const inputTypes = [
-    "text",
-    "password",
-    "email",
-    "number",
-    "date",
-    "checkbox",
-    "radio",
-    "file",
-    "color",
-    "submit",
-  ];
-
-  const addField = () => {
-    if (!type) return;
-    setFields([...fields, { type, placeholder }]);
-    setPlaceholder("");
-    setType("text");
+  const tabsForm = (id, name) => {
+    return `<button id="tab-${id}" role="tab" aria-controls="panel-${id}"
+onclick="openTab('${id}')" style="padding:8px;border:1px solid #ccc;border-bottom:none;background:#fff">${name}</button>`;
   };
 
-  const generateInlineHTML = () => {
-    return fields
-      .map(({ type, placeholder }) => {
-        const commonStyle =
-          "padding: 8px; margin: 6px 0; border: 1px solid #ccc; border-radius: 4px;";
-        if (type === "submit") {
-          return `<input type="submit" value="${
-            placeholder || "Submit"
-          }" style="${commonStyle} background-color: #4CAF50; color: white; cursor: pointer;" />`;
-        }
-        return `<input type="${type}" placeholder="${placeholder}" style="${commonStyle}" />`;
-      })
-      .join("\n");
+  const sectionForm = (id, title, content, index) => {
+    const isFirst = index === 0;
+    const finalForm = `<section id="panel-${id}"
+             role="tabpanel"
+             aria-labelledby="tab-${id}"
+             style="${
+               isFirst ? "" : "display:none;"
+             }border:1px solid #ccc;padding:12px">
+      ${
+        content ||
+        `<h2 style="margin:0 0 8px 0">${title}</h2><p>Not yet finished.</p>`
+      }
+    </section>`;
+
+    return finalForm;
+  };
+
+  const addTabsAndSections = (id, name, title, content) => {
+    const newTab = tabsForm(id, name);
+    const newSection = sectionForm(
+      id,
+      title,
+      content,
+      tabs.length === 0 ? 0 : 1
+    );
+    setTabs((prev) => [...prev, newTab]);
+    setSections((prev) => [...prev, newSection]);
+
+    setId("");
+    setName("");
+    setTitle("");
+    setContent("");
   };
 
   const generateFullHTMLPage = () => {
-    const formFields = fields
-      .map(({ type, placeholder }) => {
-        const commonStyle =
-          "padding: 8px; margin: 6px 0; border: 1px solid #ccc; border-radius: 4px;";
-        if (type === "submit") {
-          return `<input type="submit" value="${
-            placeholder || "Submit"
-          }" style="${commonStyle} background-color: #4CAF50; color: white; cursor: pointer;" />`;
-        }
-        return `<input type="${type}" placeholder="${placeholder}" style="${commonStyle}" />`;
-      })
-      .join("\n");
-
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,18 +66,40 @@ export default function Home() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Generated Form</title>
 </head>
-<body style="font-family: sans-serif; padding: 2rem; background-color: #f9f9f9;">
-  <h2 style="margin-bottom: 1rem;">Generated Form</h2>
-  <form onsubmit="handleSubmit(event)">
-    ${formFields}
-  </form>
+<body style="font-family:sans-serif;margin:16px">
+  <div role="tablist" aria-label="Pages" style="display:flex;gap:6px;border-bottom:1px solid #ccc;margin-bottom:8px">
+    ${tabs.join("\n")}
+  </div>
+
+  ${sections.join("\n")}
 
   <script>
-    function handleSubmit(e) {
-      e.preventDefault();
-      alert("Form submitted!");
-      // You can add more JS logic here
+    function openTab(id){
+      document.querySelectorAll('[role="tabpanel"]').forEach(p=>p.style.display="none");
+      var panel = document.getElementById("panel-"+id);
+      if(panel) panel.style.display="block";
+
+      document.querySelectorAll('[role="tab"]').forEach(b=>{
+        b.style.background="#f7f7f7";
+        b.setAttribute("aria-selected","false");
+        b.style.borderBottom="none";
+      });
+      var btn = document.getElementById("tab-"+id);
+      if(btn){
+        btn.style.background="#fff";
+        btn.style.borderBottom="1px solid #fff";
+        btn.setAttribute("aria-selected","true");
+      }
     }
+
+    // Show first tab by default
+    (function(){
+      var first = document.querySelector('[role="tab"]');
+      if(first){
+        var id = first.id.replace('tab-','');
+        openTab(id);
+      }
+    })();
   </script>
 </body>
 </html>`;
@@ -114,84 +132,115 @@ export default function Home() {
         theme === "dark" ? "bg-black" : "bg-white",
         "min-h-screen"
       )}
-      style={{ paddingTop: "30px" }}
     >
       <h1
         className="text-3xl font-bold text-center mb-6"
         style={{
           fontFamily: "JetBrains Mono, monospace",
           color: theme === "dark" ? "white" : "black",
+          paddingTop: "20px",
         }}
       >
-        Input Form Generator
+        Tabs Generator
       </h1>
 
       <div
         className="flex flex-wrap justify-evenly items-center"
         style={{ padding: "10px" }}
       >
-        {/* Section 1: Add Field */}
-        <div
-          style={{
-            ...cardBaseStyle,
-            ...(theme === "dark" ? cardDark : cardLight),
-            width: "400px",
-          }}
-        >
-          <h2 style={{ fontSize: "20px", marginBottom: "16px" }}>
-            🧱 Add Form Fields
-          </h2>
+        <div>
           <div
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+            style={{
+              ...cardBaseStyle,
+              ...(theme === "dark" ? cardDark : cardLight),
+              width: "400px",
+              display: "grid",
+              gap: "10px",
+            }}
           >
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              style={{
-                padding: "10px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                fontFamily: "inherit",
-              }}
-            >
-              {inputTypes.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
+            <label>
+              <span style={{ fontSize: "12px", opacity: 0.7 }}>ID</span>
+              <input
+                type="text"
+                value={id}
+                onChange={(e) => setId(e.target.value.replace(" ", "-"))}
+                style={{
+                  width: "100%",
+                  padding: "6px 8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
+            </label>
 
-            <input
-              type="text"
-              placeholder="Placeholder or Label"
-              value={placeholder}
-              onChange={(e) => setPlaceholder(e.target.value)}
-              style={{
-                padding: "10px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                fontFamily: "inherit",
-              }}
-            />
+            <label>
+              <span style={{ fontSize: "12px", opacity: 0.7 }}>Name</span>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "6px 8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
+            </label>
 
+            <label>
+              <span style={{ fontSize: "12px", opacity: 0.7 }}>Title</span>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "6px 8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
+            </label>
+
+            <label>
+              <span style={{ fontSize: "12px", opacity: 0.7 }}>Content</span>
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={4}
+                style={{
+                  width: "100%",
+                  padding: "6px 8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
+            </label>
             <button
-              onClick={addField}
+              onClick={() => addTabsAndSections(id, name, title, content)}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = "#516b62ff")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = "#10b981")
+              }
               style={{
-                backgroundColor: "#2563eb",
+                background: "#10b981",
                 color: "white",
-                padding: "10px",
-                borderRadius: "4px",
+                padding: "8px 12px",
                 border: "none",
+                borderRadius: "4px",
                 cursor: "pointer",
-                fontFamily: "inherit",
+                fontWeight: "bold",
+                transition: "background-color 0.2s ease",
               }}
             >
-              ➕ Add Field
+              Add Tab
             </button>
           </div>
         </div>
 
-        {/* Section 2: Generated HTML */}
         <div
           style={{
             ...cardBaseStyle,
@@ -200,9 +249,13 @@ export default function Home() {
           }}
         >
           <h2 style={{ fontSize: "20px", marginBottom: "16px" }}>
-            🧾 Generated Inline HTML
+            Generated Inline HTML
           </h2>
           <button
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = "#516b62ff")
+            }
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#10b981")}
             onClick={() =>
               navigator.clipboard.writeText(generateFullHTMLPage())
             }
@@ -249,7 +302,7 @@ export default function Home() {
               height: "400px",
             }}
           >
-            {/* Line Numbers */}
+           
 
             {/* Code Block */}
             <SyntaxHighlighter
@@ -270,6 +323,88 @@ export default function Home() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function EscapeRoom() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  return (
+    <div
+      style={{
+        border: "1px solid",
+        borderColor: isDark ? "#333" : "#ccc",
+        borderTop: "none",
+        padding: 16,
+        background: isDark ? "#18181b" : "#fff",
+        color: isDark ? "#fff" : "#111",
+      }}
+    >
+      <h2 style={{ marginTop: 0 }}>Escape Room</h2>
+      <p>Not yet finished. Add Escape Room content here.</p>
+    </div>
+  );
+}
+
+function CodingRaces() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  return (
+    <div
+      style={{
+        border: "1px solid",
+        borderColor: isDark ? "#333" : "#ccc",
+        borderTop: "none",
+        padding: 16,
+        background: isDark ? "#18181b" : "#fff",
+        color: isDark ? "#fff" : "#111",
+      }}
+    >
+      <h2 style={{ marginTop: 0 }}>Coding Races</h2>
+      <p>Not yet finished. Add Coding Races content here.</p>
+    </div>
+  );
+}
+
+function CourtRoom() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  return (
+    <div
+      style={{
+        border: "1px solid",
+        borderColor: isDark ? "#333" : "#ccc",
+        borderTop: "none",
+        padding: 16,
+        background: isDark ? "#18181b" : "#fff",
+        color: isDark ? "#fff" : "#111",
+      }}
+    >
+      <h2 style={{ marginTop: 0 }}>Court Room</h2>
+      <p>Not yet finished. Put your Court Room content here.</p>
+    </div>
+  );
+}
+
+export default function Home() {
+  const { activeTab, setActiveTab } = useHome();
+  const { theme } = useTheme();
+  return (
+    <div
+      className={clsx(
+        theme === "dark" ? "bg-black" : "bg-white",
+        "min-h-screen"
+      )}
+    >
+      <HomeTabs />
+      {activeTab === 3 && <TabsGenerator />}
+      {activeTab === 0 && <EscapeRoom />}
+      {activeTab === 1 && <CodingRaces />}
+      {activeTab === 2 && <CourtRoom />}
     </div>
   );
 }

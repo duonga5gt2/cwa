@@ -21,9 +21,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Escape Room", href: "/escape-room" },
-  { label: "Court Room", href: "/court-room" },
-  { label: "Coding Races", href: "/coding-races" },
 ];
 
 const Navbar = () => {
@@ -95,7 +92,7 @@ const Navbar = () => {
             showBorder={false}
             className="text-3xl font-black"
           >
-            CWA Project
+            Cloud-based Web Applications
           </GradientText>
         </Typography>
 

@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { ThemeProvider } from "../../contexts/ThemeContext";
 import Navbar from "../../components/elements/Navbar";
 import Footer from "../../components/elements/Footer";
+import { HomeProvider } from "../../contexts/HomeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,8 +38,10 @@ export default function RootLayout({ children }) {
 
             <hr style={{ border: 0, borderTop: "2px solid #222", margin: 0 }} />
           </header>
+          <HomeProvider>
+            <main style={{ paddingTop: 80 }}>{children}</main>
+          </HomeProvider>
 
-          <main style={{ paddingTop: 80 }}>{children}</main>
           <Footer />
         </ThemeProvider>
       </body>
