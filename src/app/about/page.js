@@ -267,9 +267,6 @@ export default function About() {
           </div>
         </div>
 
-        {/* How it’s put together */}
-
-        {/* Video placeholder */}
         <h2 style={sectionTitle}>Project Video</h2>
 
         <div style={videoWrap}>
@@ -289,24 +286,6 @@ export default function About() {
             />
           </div>
         </div>
-
-        {/* Optional: Ready-made iframe snippet (commented) */}
-        {/*
-        <div style={videoWrap}>
-          <div style={{ ...videoInner, background: 'transparent' }}>
-            <iframe
-              width="100%"
-              height="100%"
-              src="https://www.youtube.com/embed/VIDEO_ID?rel=0"
-              title="CWA Project Demo"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{ position: 'absolute', inset: 0 }}
-            />
-          </div>
-        </div>
-        */}
       </div>
     </div>
   );
