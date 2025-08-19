@@ -19,6 +19,16 @@ function TabsGenerator() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
+  const [items, setItems] = useState([]); // [{id, name, title, content}]
+  const regenTab = (it) => tabsForm(it.id, it.name);
+  const regenSection = (it, idx) =>
+    sectionForm(it.id, it.title, it.content, idx === 0 ? 0 : 1);
+
+  const syncFromItems = (list) => {
+    setTabs(list.map((it) => regenTab(it)));
+    setSections(list.map((it, idx) => regenSection(it, idx)));
+  };
+
   // ---- Theme tokens (inline, no structural changes) ----
   const isDark = theme === "dark";
   const fontSans =
@@ -90,15 +100,11 @@ ${name}</button>`;
   };
 
   const addTabsAndSections = (id, name, title, content) => {
-    const newTab = tabsForm(id, name);
-    const newSection = sectionForm(
-      id,
-      title,
-      content,
-      tabs.length === 0 ? 0 : 1
-    );
-    setTabs((prev) => [...prev, newTab]);
-    setSections((prev) => [...prev, newSection]);
+    if (!(id && name && title && content)) return;
+
+    const nextItems = [...items, { id, name, title, content }];
+    setItems(nextItems);
+    syncFromItems(nextItems);
 
     setId("");
     setName("");
@@ -161,8 +167,17 @@ ${name}</button>`;
   };
 
   const deleteTab = (index) => {
-    setTabs((prev) => prev.filter((_, i) => i !== index));
-    setSections((prev) => prev.filter((_, i) => i !== index));
+    const nextItems = items.filter((_, i) => i !== index);
+    setItems(nextItems);
+    syncFromItems(nextItems);
+  };
+
+  const updateItem = (index, patch) => {
+    const nextItems = items.map((it, i) =>
+      i === index ? { ...it, ...patch } : it
+    );
+    setItems(nextItems);
+    syncFromItems(nextItems);
   };
 
   // ---- Shared card styles ----
@@ -348,39 +363,155 @@ ${name}</button>`;
             {/* Existing form to add a tab goes here */}
 
             {/* List of created tabs with delete buttons */}
-            <div style={{ marginTop: "16px" }}>
-              {tabs.map((tab, i) => (
+          </div>
+        </div>
+        <div
+          role="list"
+          style={{
+            border: `1px solid ${tone.border}`,
+            borderRadius: 10,
+            background: isDark ? "#0e1116" : tone.surfaceAlt,
+            padding: 8,
+            maxHeight: 420,
+            overflowY: "auto",
+            overscrollBehavior: "contain",
+          }}
+        >
+          {items.length === 0 ? (
+            <div
+              style={{
+                fontFamily: fontSans,
+                fontSize: 13,
+                color: isDark ? "#94a3b8" : "#64748b",
+                padding: "24px 8px",
+                textAlign: "center",
+              }}
+            >
+              No tabs yet. Add one on the left →
+            </div>
+          ) : (
+            items.map((it, i) => (
+              <div
+                role="listitem"
+                key={it.id || i}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr auto",
+                  gap: 8,
+                  padding: "10px",
+                  borderRadius: 8,
+                  border: `1px solid ${tone.border}`,
+                  background: isDark ? "#0b0f14" : "#fff",
+                  boxShadow: isDark
+                    ? "0 1px 0 rgba(0,0,0,0.4)"
+                    : "0 1px 0 rgba(16,24,40,0.04)",
+                  marginBottom: 8,
+                }}
+              >
+                <div style={{ display: "grid", gap: 6 }}>
+                  {/* Name (this is what appears on the tab button) */}
+                  <label style={{ display: "grid", gap: 4 }}>
+                    <span style={{ ...labelHint, fontSize: 11 }}>Name</span>
+                    <input
+                      type="text"
+                      value={it.name}
+                      onChange={(e) => updateItem(i, { name: e.target.value })}
+                      onFocus={(e) =>
+                        (e.currentTarget.style.boxShadow = focusRing())
+                      }
+                      onBlur={(e) =>
+                        (e.currentTarget.style.boxShadow =
+                          "inset 0 1px 2px rgba(0,0,0,.05)")
+                      }
+                      style={inputBase}
+                    />
+                  </label>
+
+                  {/* Title (used in the section fallback heading) */}
+                  <label style={{ display: "grid", gap: 4 }}>
+                    <span style={{ ...labelHint, fontSize: 11 }}>Title</span>
+                    <input
+                      type="text"
+                      value={it.title}
+                      onChange={(e) => updateItem(i, { title: e.target.value })}
+                      onFocus={(e) =>
+                        (e.currentTarget.style.boxShadow = focusRing())
+                      }
+                      onBlur={(e) =>
+                        (e.currentTarget.style.boxShadow =
+                          "inset 0 1px 2px rgba(0,0,0,.05)")
+                      }
+                      style={inputBase}
+                    />
+                  </label>
+
+                  {/* Content (HTML allowed) */}
+                  <label style={{ display: "grid", gap: 4 }}>
+                    <span style={{ ...labelHint, fontSize: 11 }}>
+                      Content (HTML ok)
+                    </span>
+                    <textarea
+                      value={it.content}
+                      rows={3}
+                      onChange={(e) =>
+                        updateItem(i, { content: e.target.value })
+                      }
+                      onFocus={(e) =>
+                        (e.currentTarget.style.boxShadow = focusRing())
+                      }
+                      onBlur={(e) =>
+                        (e.currentTarget.style.boxShadow =
+                          "inset 0 1px 2px rgba(0,0,0,.05)")
+                      }
+                      style={{
+                        ...inputBase,
+                        resize: "vertical",
+                        minHeight: 80,
+                        fontFamily: fontMono,
+                      }}
+                    />
+                  </label>
+                </div>
+
                 <div
-                  key={i}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    marginBottom: "8px",
-                  }}
+                  style={{ display: "flex", flexDirection: "column", gap: 6 }}
                 >
-                  <div dangerouslySetInnerHTML={{ __html: tab }} />
                   <button
                     onClick={() => deleteTab(i)}
                     style={{
                       background: "#ef4444",
                       color: "#fff",
                       border: "none",
-                      borderRadius: "6px",
-                      padding: "4px 8px",
+                      borderRadius: 8,
+                      padding: "8px 10px",
                       cursor: "pointer",
-                      fontSize: "12px",
-                      fontWeight: 600,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      fontFamily: fontSans,
+                      boxShadow: "0 1px 0 rgba(0,0,0,0.15)",
+                      transition: "filter 120ms ease, transform 120ms ease",
                     }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.filter = "brightness(1.05)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.filter = "none")
+                    }
+                    onMouseDown={(e) =>
+                      (e.currentTarget.style.transform = "translateY(1px)")
+                    }
+                    onMouseUp={(e) =>
+                      (e.currentTarget.style.transform = "translateY(0)")
+                    }
+                    aria-label={`Delete tab ${i + 1}`}
+                    title="Delete"
                   >
                     Delete
                   </button>
                 </div>
-              ))}
-            </div>
-
-            {/* Your preview section continues here */}
-          </div>
+              </div>
+            ))
+          )}
         </div>
 
         <div style={{ ...cardBaseStyle, width: "540px" }}>

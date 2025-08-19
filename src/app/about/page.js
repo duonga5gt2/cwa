@@ -268,21 +268,6 @@ export default function About() {
         </div>
 
         {/* How it’s put together */}
-        <h2 style={sectionTitle}>How it’s put together</h2>
-        <ul style={list}>
-          <li>
-            <strong>Design tokens:</strong> tiny inline theme tokens (bg,
-            border, text, shadows) to keep things consistent.
-          </li>
-          <li>
-            <strong>Structure-safe upgrades:</strong> all visual polish avoids
-            changing your component structures/handlers.
-          </li>
-          <li>
-            <strong>Performance-friendly:</strong> no heavy animation; gradients
-            and shadows are subtle.
-          </li>
-        </ul>
 
         {/* Video placeholder */}
         <h2 style={sectionTitle}>Project Video</h2>
