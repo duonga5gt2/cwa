@@ -1,7 +1,7 @@
 "use client";
 import { useTheme } from "../../contexts/ThemeContext";
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
   oneDark,
@@ -10,8 +10,12 @@ import {
 import HomeTabs from "../../components/elements/HomeTabs";
 import { useHome } from "../../contexts/HomeContext";
 
+const LS_ITEMS = "tabsGen.items";
+
 function TabsGenerator() {
   const { theme } = useTheme();
+
+  const isDark = theme === "dark";
   const [tabs, setTabs] = useState([]);
   const [sections, setSections] = useState([]);
   const [id, setId] = useState("");
@@ -19,7 +23,34 @@ function TabsGenerator() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const [items, setItems] = useState([]); // [{id, name, title, content}]
+  const [items, setItems] = useState(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const raw = window.localStorage.getItem(LS_ITEMS);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const didMount = useRef(false);
+
+  useEffect(() => {
+    syncFromItems(items);
+    didMount.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!didMount.current) return;
+    try {
+      if (typeof window === "undefined") return;
+      window.localStorage.setItem(LS_ITEMS, JSON.stringify(items));
+    } catch (err) {
+      console.error("Error saving items", err);
+    }
+  }, [items]);
+
   const regenTab = (it) => tabsForm(it.id, it.name);
   const regenSection = (it, idx) =>
     sectionForm(it.id, it.title, it.content, idx === 0 ? 0 : 1);
@@ -30,7 +61,7 @@ function TabsGenerator() {
   };
 
   // ---- Theme tokens (inline, no structural changes) ----
-  const isDark = theme === "dark";
+
   const fontSans =
     'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"';
   const fontMono =

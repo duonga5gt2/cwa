@@ -33,14 +33,13 @@ export default function HomeTabs() {
 
   const isDark = theme === "dark";
 
-  // --- Visual tokens (colors/fonts only; no structure changes) ---
   const fontSans =
     'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
   const borderCol = isDark ? "#2a2f3a" : "#e2e8f0";
   const textCol = isDark ? "#e6e7ea" : "#0f172a";
   const textMuted = isDark ? "#a6adbb" : "#475569";
 
-  // fun, colorful gradients per tab (consistent order)
+
   const tabGradientsDark = [
     "linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #f43f5e 100%)", // Tabs
     "linear-gradient(135deg, #22d3ee 0%, #06b6d4 50%, #0ea5e9 100%)", // Escape Room
@@ -83,7 +82,6 @@ export default function HomeTabs() {
         ? "inset 0 -1px 0 rgba(0,0,0,.35)"
         : "inset 0 -1px 0 rgba(0,0,0,.06)",
       transition: "filter .15s ease, transform .06s ease, box-shadow .2s ease",
-      // subtle interactive feel without adding handlers or changing structure
       transform: isActive ? "translateY(0)" : "translateY(0)",
     };
   };
