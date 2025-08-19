@@ -271,13 +271,22 @@ export default function About() {
 
         {/* Video placeholder */}
         <h2 style={sectionTitle}>Project Video</h2>
+
         <div style={videoWrap}>
-          <div style={videoInner}>
-            {/* Replace this box: 
-                - Option A: drop a <video controls src="/your-video.mp4" style={{width:'100%', height:'100%'}} />
-                - Option B: embed YouTube/Vimeo in an iframe below.
-            */}
-            <span>Place your demo video here (16:9)</span>
+          <div style={{ ...videoInner, background: "transparent" }}>
+            <iframe
+              title="CWA Project Demo"
+              src="https://www.youtube.com/embed/mnRTolD-ebs?rel=0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                border: 0,
+              }}
+            />
           </div>
         </div>
 
