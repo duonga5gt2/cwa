@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CWA – Frontend Functions (Assignment 1)
 
-## Getting Started
+This Next.js app delivers the required **UI features** and **HTML generator** for MOODLE/LMS.
 
-First, run the development server:
+## Core Functions
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **App Shell**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  - **Header / Menu**: responsive Hamburger/Kebab menu with breadcrumbs.
+  - **Footer**: copyright + Student Name + Student Number + Date on every page.
+  - **Pages**: Home, About, Escape Room, Coding Races, Court Room (stubs allowed).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Theme System**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  - **Dark/Light mode** with OS fallback (`prefers-color-scheme`).
+  - Persisted via `localStorage`; toggles `html.dark` for global styling.
+  - All tones (text, border, surfaces) adapt to theme.
 
-## Learn More
+- **Navigation Persistence**
 
-To learn more about Next.js, take a look at the following resources:
+  - **Cookies** remember the last selected menu/tab, restoring state on reload.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Accessibility**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  - Tabs and panels use **ARIA roles** (`tablist`, `tab`, `tabpanel`) and labels.
+  - Focus rings, readable contrast, and semantic HTML across components.
 
-## Deploy on Vercel
+- **About Page**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  - Shows **Your Name** + **Student Number**.
+  - **16:9 video** walkthrough embed (YouTube iframe) or direct `<video>`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Home: Code Generator**
+  - **Tabs Generator** builds tabs + matching panels.
+  - Outputs **HTML5 + inline CSS + JS** (no CSS classes) suitable for MOODLE.
+  - **Live preview** + **Copy to Clipboard** for a single-file export (`Hello.html` ready).
+  - Optional middle editor to update **Name / Title / Content** per tab.
+
+## Notes for LMS
+
+- Output is plain **HTML + inline CSS + JS** only—drop-in compatible with MOODLE blocks.
+- No external stylesheets required.
