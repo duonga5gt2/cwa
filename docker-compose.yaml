@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pg_local
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppass
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .              # uses your Dockerfile
+    container_name: next_app
+    ports:
+      - "9000:9000"
+    environment:
+      # talk to Postgres **by service name** (db), not localhost
+      DATABASE_URL: postgres://appuser:apppass@db:5432/appdb
+      # add any NEXT_PUBLIC_* here if needed
+    # live-edit during dev: mount your code into the container
+    volumes:
+      - .:/app
+      # keep container's node_modules separate so bind-mount doesn't wipe it
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
