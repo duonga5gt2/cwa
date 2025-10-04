@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark, oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import HomeTabs from "../../components/elements/HomeTabs";
 import { useHome } from "../../contexts/HomeContext";
-
+import EscapeRoomSection from "../../components/elements/EscapeRoomSection"
 type TabItem = { id: string; name: string; title: string; content: string };
 
 type ThemeContextValue = { theme: "dark" | "light" | string };
@@ -539,8 +539,7 @@ function EscapeRoom() {
         fontFamily: fontSans,
       }}
     >
-      <h2 style={{ marginTop: 0, letterSpacing: ".2px" }}>Escape Room</h2>
-      <p style={{ color: isDark ? "#a6adbb" : "#475569" }}>Not yet finished. Add Escape Room content here.</p>
+      <EscapeRoomSection />
     </div>
   );
 }
