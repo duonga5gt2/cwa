@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Timer from "./Timer";
-export default function EscapeRoom() {
+export default function TimerSection() {
     const [miliseconds, setMiliseconds] = useState<number>(300000)
     const [isCountingDown, setIsCountingDown] = useState<boolean>(false)
     

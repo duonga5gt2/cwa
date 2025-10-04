@@ -32,9 +32,9 @@ const Timer = ({duration, isCountingDown}: TimerProps) => {
         let seconds: number = total_seconds % 60
         let minutes: number = total_minutes % 60
         let hours: number = total_hours % 24
-
-        return `${hours}:${minutes}:${seconds}`
-    }
+        const pad = (n: number) => String(n).padStart(2, "0");
+        return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    };
 
   return (
     <div>
