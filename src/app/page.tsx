@@ -7,6 +7,12 @@ import { oneDark, oneLight } from "react-syntax-highlighter/dist/esm/styles/pris
 import HomeTabs from "../../components/elements/HomeTabs";
 import { useHome } from "../../contexts/HomeContext";
 import TimerSection from "../../components/elements/TimerSection"
+import EscapeRoomGame from "../../components/elements/EscapRoomGame";
+
+
+
+
+
 type TabItem = { id: string; name: string; title: string; content: string };
 
 type ThemeContextValue = { theme: "dark" | "light" | string };
@@ -519,7 +525,7 @@ ${name}</button>`;
 }
 
 function EscapeRoom() {
-  const { theme } = (useTheme() as ThemeContextValue);
+  const { theme } = useTheme() as ThemeContextValue;
   const isDark = theme === "dark";
   const fontSans =
     'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
@@ -537,8 +543,13 @@ function EscapeRoom() {
         borderBottomRightRadius: 12,
         boxShadow: isDark ? "0 8px 22px rgba(0,0,0,.4)" : "0 8px 22px rgba(15,23,42,.06)",
         fontFamily: fontSans,
+        backgroundImage: 'url(/download.jpeg)', // Background Image
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
-    >
+    > 
+      <EscapeRoomGame />
       <TimerSection />
     </div>
   );
