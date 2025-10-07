@@ -18,19 +18,16 @@ services:
       retries: 10
 
   app:
-    build: .              # uses your Dockerfile
+    build: .
     container_name: next_app
-    ports:
-      - "9000:9000"
     environment:
-      # talk to Postgres **by service name** (db), not localhost
+      # Inside container talk to Postgres via service name "db"
       DATABASE_URL: postgres://appuser:apppass@db:5432/appdb
-      # add any NEXT_PUBLIC_* here if needed
-    # live-edit during dev: mount your code into the container
-    volumes:
-      - .:/app
-      # keep container's node_modules separate so bind-mount doesn't wipe it
-      - /app/node_modules
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 9000
     depends_on:
       db:
         condition: service_healthy
+    ports:
+      - "9000:9000"
