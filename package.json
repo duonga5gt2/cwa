@@ -7,12 +7,10 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-
     "prisma:generate": "prisma generate",
     "prisma:dev": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -30,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.56.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

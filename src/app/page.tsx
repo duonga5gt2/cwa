@@ -277,6 +277,7 @@ ${name}</button>`;
           textShadow: isDark ? "0 1px 0 rgba(0,0,0,.4)" : "0 1px 0 #fff",
           fontSize: "3rem",
         }}
+        role="heading"
       >
         Tabs Generator
       </h1>
