@@ -41,4 +41,4 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "9000:9000"
+      - "80:9000"
