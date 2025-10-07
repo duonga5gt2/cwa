@@ -42,6 +42,59 @@ function TabsGenerator() {
     }
   });
 
+  // ---- LAMBDA PREVIEW: minimal state ----
+const [lambdaLoading, setLambdaLoading] = useState(false);
+const [lambdaError, setLambdaError] = useState<string | null>(null);
+
+// Build payload for Lambda (based on your items)
+const buildLambdaPayload = () => {
+  const stages = items.map((it, i) => ({
+    name: it.title || it.name || `Stage ${i + 1}`,
+    instructions: it.content || "",
+  }));
+  return {
+    id: crypto.randomUUID(),
+    title: "Tabs Output",
+    timerSec: 120,
+    stages,
+    theme: isDark ? "dark" : "light",
+  };
+};
+
+// Call proxy → Lambda, stash HTML, open /preview
+const openLambdaPreview = async () => {
+  try {
+    setLambdaLoading(true);
+    setLambdaError(null);
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(buildLambdaPayload()),
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${await res.text()}`);
+    const data = await res.json(); // { id, url?, html? }
+    const html = data?.html;
+    if (!html && !data?.url) throw new Error("Lambda returned no HTML or URL");
+
+    // Prefer HTML returned by Lambda; fallback: if URL provided, fetch it
+    let finalHtml = html;
+    if (!finalHtml && data.url) {
+      const fetched = await fetch(data.url);
+      finalHtml = await fetched.text();
+    }
+
+    // Put into sessionStorage and jump to /preview
+    sessionStorage.setItem("lambdaPreviewHtml", finalHtml);
+    window.location.href = "/preview";
+  } catch (e: any) {
+    setLambdaError(e?.message || "Failed to generate");
+  } finally {
+    setLambdaLoading(false);
+  }
+};
+
+
   const didMount = useRef<boolean>(false);
 
   useEffect(() => {
@@ -486,6 +539,22 @@ ${name}</button>`;
             </svg>
             Copy
           </button>
+
+          <button
+            onClick={openLambdaPreview}
+            disabled={lambdaLoading}
+            style={{ ...successBtn, marginLeft: 8, opacity: lambdaLoading ? 0.7 : 1 }}
+            title="Generate with Lambda and open preview page"
+          >
+            {lambdaLoading ? "Generating…" : "Preview Current Tabs (Lambda)"}
+          </button>
+
+          {lambdaError && (
+            <div style={{ marginTop: 8, color: "#ef4444", fontFamily: fontSans, fontSize: 14 }}>
+              {lambdaError}
+            </div>
+          )}
+
 
           <div
             style={{

@@ -20,6 +20,7 @@ services:
     build: .
     container_name: next_app
     environment:
+    
       # App runtime
       NODE_ENV: production
       HOST: 0.0.0.0
@@ -33,7 +34,9 @@ services:
       SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE}
       SENTRY_PROFILES_SAMPLE_RATE: ${SENTRY_PROFILES_SAMPLE_RATE}
-      
+
+      # --- Lambda ---
+      GENERATE_ENDPOINT: ${GENERATE_ENDPOINT}
     depends_on:
       db:
         condition: service_healthy
