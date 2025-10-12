@@ -43,56 +43,78 @@ function TabsGenerator() {
   });
 
   // ---- LAMBDA PREVIEW: minimal state ----
-const [lambdaLoading, setLambdaLoading] = useState(false);
-const [lambdaError, setLambdaError] = useState<string | null>(null);
+  const [lambdaLoading, setLambdaLoading] = useState(false);
+  const [lambdaError, setLambdaError] = useState<string | null>(null);
 
-// Build payload for Lambda (based on your items)
-const buildLambdaPayload = () => {
-  const stages = items.map((it, i) => ({
-    name: it.title || it.name || `Stage ${i + 1}`,
-    instructions: it.content || "",
-  }));
-  return {
-    id: crypto.randomUUID(),
-    title: "Tabs Output",
-    timerSec: 120,
-    stages,
-    theme: isDark ? "dark" : "light",
-  };
-};
-
-// Call proxy → Lambda, stash HTML, open /preview
-const openLambdaPreview = async () => {
-  try {
-    setLambdaLoading(true);
-    setLambdaError(null);
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(buildLambdaPayload()),
-      cache: "no-store",
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status} ${await res.text()}`);
-    const data = await res.json(); // { id, url?, html? }
-    const html = data?.html;
-    if (!html && !data?.url) throw new Error("Lambda returned no HTML or URL");
-
-    // Prefer HTML returned by Lambda; fallback: if URL provided, fetch it
-    let finalHtml = html;
-    if (!finalHtml && data.url) {
-      const fetched = await fetch(data.url);
-      finalHtml = await fetched.text();
+  // Safe UUID (works in old browsers/containers too)
+  const safeUUID = () => {
+    // Browser Web Crypto (modern)
+    if (typeof window !== "undefined" && (window as any).crypto?.randomUUID) {
+      try { return (window as any).crypto.randomUUID(); } catch { }
     }
+    // Node (if it ever runs server-side by accident)
+    try {
+      // dynamic import to avoid bundler complaints in client code
+      // @ts-ignore
+      const nodeCrypto = require?.("crypto");
+      if (nodeCrypto?.randomUUID) return nodeCrypto.randomUUID();
+    } catch { }
+    // Fallback RFC4122 v4-ish
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
 
-    // Put into sessionStorage and jump to /preview
-    sessionStorage.setItem("lambdaPreviewHtml", finalHtml);
-    window.location.href = "/preview";
-  } catch (e: any) {
-    setLambdaError(e?.message || "Failed to generate");
-  } finally {
-    setLambdaLoading(false);
-  }
-};
+
+  // Build payload for Lambda (based on your items)
+  const buildLambdaPayload = () => {
+    const stages = items.map((it, i) => ({
+      name: it.title || it.name || `Stage ${i + 1}`,
+      instructions: it.content || "",
+    }));
+    return {
+      id: safeUUID(),
+      title: "Tabs Output",
+      timerSec: 120,
+      stages,
+      theme: isDark ? "dark" : "light",
+    };
+  };
+
+  // Call proxy → Lambda, stash HTML, open /preview
+  const openLambdaPreview = async () => {
+    try {
+      setLambdaLoading(true);
+      setLambdaError(null);
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(buildLambdaPayload()),
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${await res.text()}`);
+      const data = await res.json(); // { id, url?, html? }
+      const html = data?.html;
+      if (!html && !data?.url) throw new Error("Lambda returned no HTML or URL");
+
+      // Prefer HTML returned by Lambda; fallback: if URL provided, fetch it
+      let finalHtml = html;
+      if (!finalHtml && data.url) {
+        const fetched = await fetch(data.url);
+        finalHtml = await fetched.text();
+      }
+
+      // Put into sessionStorage and jump to /preview
+      sessionStorage.setItem("lambdaPreviewHtml", finalHtml);
+      window.location.href = "/preview";
+    } catch (e: any) {
+      setLambdaError(e?.message || "Failed to generate");
+    } finally {
+      setLambdaLoading(false);
+    }
+  };
 
 
   const didMount = useRef<boolean>(false);
@@ -177,9 +199,8 @@ ${name}</button>`;
                     color:${tone.text};
                     border-radius:12px;
                     box-shadow: 0 6px 20px ${isDark ? "rgba(0,0,0,.35)" : "rgba(15, 23, 42, .06)"};">
-      ${
-        content ||
-        `<h2 style="margin:0 0 10px 0;font:700 18px ${fontSans};color:${tone.text}">${title}</h2><p style="margin:0;color:${tone.textMuted};font:400 14px ${fontSans}">Not yet finished.</p>`
+      ${content ||
+      `<h2 style="margin:0 0 10px 0;font:700 18px ${fontSans};color:${tone.text}">${title}</h2><p style="margin:0;color:${tone.textMuted};font:400 14px ${fontSans}">Not yet finished.</p>`
       }
     </section>`;
     return finalForm;
@@ -618,7 +639,7 @@ function EscapeRoom() {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
-    > 
+    >
       <EscapeRoomGame />
       <TimerSection />
     </div>
